@@ -17,7 +17,7 @@ public class WeightedLinkedTree<E> implements Tree<E> {
         return checkPosition(child).getWeight();
     }
 
-    private class TreeNode<T> implements Position<T> {
+    private static class TreeNode<T> implements Position<T> {
 
         private T element;
         private TreeNode<T> parent;
@@ -273,13 +273,12 @@ public class WeightedLinkedTree<E> implements Tree<E> {
      *
      * @param p The position of the parent, e the element stored in the new
      * created node.
-     * @throws InvalidPositionException
      */
     public Position<E> add(E element, Position<E> p, final int weight) {
         TreeNode<E> parent = checkPosition(p);
-        TreeNode<E> newNode = new TreeNode<>(this, element, parent, new ArrayList<TreeNode<E>>());
+        TreeNode<E> newNode = new TreeNode<>(this, element, parent, new ArrayList< this>());
         newNode.setWeight(weight);
-        List<WeightedLinkedTree<E>.TreeNode<E>> l = parent.getChildren();
+        List<WeightedLinkedTree.TreeNode<E>> l = parent.getChildren();
         l.add(newNode);
         size++;
         return newNode;
@@ -290,7 +289,6 @@ public class WeightedLinkedTree<E> implements Tree<E> {
      * Remove a node and its corresponding subtree rooted at node.
      *
      * @param p The position of the node to be removed.
-     * @throws InvalidPositionException
      */
     public void remove(Position<E> p) {
         TreeNode<E> node = checkPosition(p);
