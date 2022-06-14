@@ -1,9 +1,6 @@
 package examen.socialnetwork;
 
-import material.graphs.ELGraph;
-import material.graphs.Edge;
-import material.graphs.Graph;
-import material.graphs.Vertex;
+import material.graphs.*;
 
 import java.util.*;
 
@@ -14,10 +11,14 @@ import java.util.*;
  */
 public class SocialNetwork {
 
-    
+    ELGraph<String, Integer> socialGraph;
+    Map<String, Vertex<String>> vertexMap;
+    Map<Integer, List<Vertex<String>>> friendMap;
 
     public SocialNetwork() {
-      
+      socialGraph = new ELGraph<>();
+      vertexMap = new HashMap<>();
+      friendMap = new HashMap<>();
     }
 
     /**
@@ -25,7 +26,13 @@ public class SocialNetwork {
      * @param user the name of the user to be added
      */
     public void addUser(String user) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		Vertex<String> vertex = socialGraph.insertVertex(user);
+
+        if (vertex != null){
+            vertexMap.put(user, vertex);
+            List<Vertex<String>> list = friendMap.computeIfAbsent(0, K -> new ArrayList<>());
+            list.add(vertex);
+        }
     }
 
     /**
@@ -34,7 +41,11 @@ public class SocialNetwork {
      * @param user2 name of the second user
      */
     public void makeFriends(String user1, String user2) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		if (vertexMap.containsKey(user1) && vertexMap.containsKey(user2)){
+            Vertex<String> vertex1 = vertexMap.get(user1);
+            Vertex<String> vertex2 = vertexMap.get(user2);
+            socialGraph.insertEdge(vertex1, vertex2, 1);
+        }
     }
 
     /**
@@ -44,8 +55,36 @@ public class SocialNetwork {
      * @return users removed from the social network
      */
     public Iterable<String> filter(int k) {
-		throw new UnsupportedOperationException("Not yet implemented");
+        boolean userDeleted = true;
+        Set<String> toReturn = new HashSet<>();
+        while (userDeleted){
+            userDeleted = false;
+            for (Vertex<String> vertex : socialGraph.vertices()){
+                if ( socialGraph.incidentEdges(vertex).size() < k && !toReturn.contains(vertex.getElement())){
+                    toReturn.add(vertex.getElement());
+                    userDeleted = true;
+                }
+            }
+            for (String vertex : toReturn){
+                socialGraph.removeVertex(vertexMap.get(vertex));
+            }
+        }
+        System.out.println(toReturn);
+        return toReturn;
+    }
 
+    private void copyGraph(Graph<String, Integer> graph, Graph<String, Integer> graphCopy){
+
+        for (Vertex<String> vertex :
+                graph.vertices()) {
+            graphCopy.insertVertex(vertex.getElement());
+        }
+
+        for (Edge<Integer> edge : graph.edges()){
+            Vertex<String> vertex1 = graph.endVertices(edge).get(0);
+            Vertex<String> vertex2 = graph.endVertices(edge).get(1);
+            graphCopy.insertEdge(vertex1, vertex2, 0);
+        }
     }
 
     /**
@@ -53,8 +92,20 @@ public class SocialNetwork {
      * @return number of groups in the social network
      */
     public int groups() {
-		throw new UnsupportedOperationException("Not yet implemented");
+        BreadthSearch<String, Integer> utility = new BreadthSearch<>();
+        int groups = 0;
 
+        ELGraph<String, Integer> graph = new ELGraph<>();
+        while (!graph.vertices().isEmpty()){
+            groups++;
+
+            Vertex<String> actualVertex = socialGraph.vertices().iterator().next();
+            for (Vertex<String> vertex : utility.traverse(socialGraph, actualVertex)) {
+                graph.removeVertex(vertex);
+            }
+        }
+
+        return groups;
     }
 
    

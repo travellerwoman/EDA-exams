@@ -45,7 +45,7 @@ public class SocialNetworkTest {
     public void filter() throws Exception {
         String expected = "Thor";
         int results = 0;
-        for (String user : socialNetwork.filter(3)) {
+        for (String user : socialNetwork.filter(5)) {
             Assert.assertEquals(expected, user);
             results++;
         }

@@ -65,6 +65,7 @@ public class SocialNetwork {
                 nombresBorrados.add(v.getElement());
             }
         }
+        System.out.println(nombresBorrados);
         return nombresBorrados;
 
     }
